@@ -88,4 +88,11 @@ const userSchema = new Schema({
 
 
 });
+userSchema.methods.chooseSpace = function () {
+    //Loop through gameGrid spaces and assign player to chosen space
+}
+userSchema.methods.determineState = function () {
+    //check for wins
+    //loop through gameGrid and determine if all spaces are filled for draw
+}
 module.exports = mongoose.model('GamePlay', userSchema);

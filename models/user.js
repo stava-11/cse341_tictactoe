@@ -29,10 +29,13 @@ const userSchema = new Schema({
     wins: Number,
     losses: Number,
     draws: Number,
-    totalGamesPlayed: Number, //need or calculate from wins/losses/draws?
+    //totalGamesPlayed: Number, //need or calculate from wins/losses/draws?
     resetToken: String,
     resetTokenExpiration: Date,
 
 
 });
+userSchema.methods.totalGamesPlayed = function()  {
+//calculate total from wins, losses, and draws
+}
 module.exports = mongoose.model('User', userSchema);
