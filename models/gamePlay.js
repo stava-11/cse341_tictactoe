@@ -35,42 +35,56 @@ const userSchema = new Schema({
     win: Boolean,
 
     draw: Boolean,
-    one: {
-        type: Number,
-        default: null
-    },
-    two: {
-        type: Number,
-        default: null
-    },
-    three: {
-        type: Number,
-        default: null
-    },
-    four: {
-        type: Number,
-        default: null
-    },
-    five: {
-        type: Number,
-        default: null
-    },
-    six: {
-        type: Number,
-        default: null
-    },
-    seven: {
-        type: Number,
-        default: null
-    },
-    eight: {
-        type: Number,
-        default: null
-    },
-    nine: {
-        type: Number,
-        default: null
-    },
+    gameGrid: {
+        spaces: [{
+            one: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            two: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            three: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            four: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            five: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            six: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            seven: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            eight: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            },
+            nine: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                default: null
+            }
+        }
+        ]
+    }
 
 
 });
