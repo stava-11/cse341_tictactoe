@@ -1,4 +1,4 @@
-  
+
 require('dotenv').config({ encoding: 'UTF-8' })
 require('dotenv').config({ path: __dirname + '/.env' });
 
@@ -16,16 +16,16 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 const app = express();
 const store = new MongoDBStore({
-  uri: MONGODB_URI, 
+  uri: MONGODB_URI,
   collection: 'sessions'
 });
 // const csrfProtection  = csrf();
 
 const cors = require('cors');
 const corsOptions = {
-    origin: "https://ta03-cse341.herokuapp.com/",
-    optionsSuccessStatus: 200
-  };
+  origin: "https://ta03-cse341.herokuapp.com/",
+  optionsSuccessStatus: 200
+};
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -34,7 +34,7 @@ app.set('views', 'views');
 const users = [];
 
 app
-.use(cors(corsOptions))
+  .use(cors(corsOptions))
 // .use('/', routes);
 
 const options = {
@@ -82,28 +82,34 @@ app.use(
 //   });
 // });
 
+app.get('/editUserProfile', (req, res, next) => {
+  res.render('editUserProfile', { pageTitle: 'Edit Profile' });
+});
+app.get('/dashboard', (req, res, next) => {
+  res.render('dashboard', { pageTitle: 'Dashboard' });
+});
 app.get('/', (req, res, next) => {
-    res.render('editUserProfile', { pageTitle: 'Add User' });
-  });
-  
+  res.render('index', { pageTitle: 'home page' });
+});
+
 app.get('/users', (req, res, next) => {
-    res.render('users', {
-      pageTitle: 'User',
-      users: users,
-      hasUsers: users.length > 0
-    });
+  res.render('users', {
+    pageTitle: 'User',
+    users: users,
+    hasUsers: users.length > 0
   });
-  
+});
+
 app.post('/add-user', (req, res, next) => {
-    users.push({ name: req.body.username });
-    res.redirect('/users');
-  });
+  users.push({ name: req.body.username });
+  res.redirect('/users');
+});
 
 mongoose
   .connect(MONGODB_URI, options)
   .then(result => {
     app.listen(PORT);
-})
-.catch(err => {
-  console.log(err);
-});
+  })
+  .catch(err => {
+    console.log(err);
+  });
