@@ -5,11 +5,19 @@
     </header>
     <body>
         <main class="ttt">
-            <% if (errorMessage) { %>
-                <div class="user-message user-message--error"><%= errorMessage %></div>
-            <% } %>
+            <!--if (errorMessage) { 
+                <div class="user-message user-message--error">  errorMessage</div>
+            }<-->
             <form class="" action="/signup" method="POST">
                 <div class="">
+                    <div class="">
+                        <label for="name">Name</label>
+                        <input class="<%= validationErrors.find(e => e.param === 'name') ? 'invalid' : '' %>" type="text" name="name" id="name" value="<%= oldInput.name %>">
+                    </div>
+                    <div class="">
+                        <label for="country">Country</label>
+                        <input class="<%= validationErrors.find(e => e.param === 'country') ? 'invalid' : '' %>" type="text" name="country" id="country" value="<%= oldInput.country %>">
+                    </div>
                     <label for="email">Email</label>
                     <input class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" id="email" value="<%= oldInput.email %>">
                 </div>
@@ -21,9 +29,9 @@
                     <label for="confirmPassword">Confirm Password</label>
                     <input class="<%= validationErrors.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>" type="password" name="confirmPassword" id="confirmPassword" value="<%= oldInput.confirmPassword %>">
                 </div>
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <!--<input type="hidden" name="_csrf" value="<%=  %>">csrfToken<-->
                 <button class="btn" type="submit">Sign Up</button>
             </form>
         </main>
-    </body>
+   
     <%- include('includes/end.ejs') %>

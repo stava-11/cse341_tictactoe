@@ -115,4 +115,9 @@ content: "";
 clear: both;
 display: table;
 }
+.error_page {
+  background-color: #04AA6D;
+  text-align: center;
+  padding:1rem;
+}
   

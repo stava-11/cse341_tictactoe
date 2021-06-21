@@ -1,5 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>
+    <%= pageTitle %>
+  </title>
+  <meta name="description" content="tic-tac-toe for CSE341 by JRolph, JStavast, HStratton">
+
+
+  <link rel="stylesheet" type="text/css" href="/css/dashboard.css">
+  <!--<style>
     .flex-container {
       display: flex;
       height: 100%;
@@ -47,28 +60,32 @@
       width: 100%;
     }
     
-</style>
+</style><-->
 </head>
-<body>
-    
-<div class="flex-container">
-    <div class="first-half">
+
+<%- include('includes/nav.ejs') %>
+
+  <body>
+
+    <div class="flex-container">
+      <div class="first-half">
         <div class="flex-item">
-            John
+          John
         </div>
         <div class="flex-item">
-            Sarah
+          Sarah
         </div>
         <div class="flex-item">
-            Joe
+          Joe
         </div>
+      </div>
+      <div class="second-half">
+        <div class="flex-item-2">
+          Players
+        </div>
+        <div class="flex-item-2">
+          Current Games
+        </div>
+      </div>
     </div>
-    <div class="second-half">
-        <div class="flex-item-2">
-            Players
-        </div>
-        <div class="flex-item-2">
-            Current Games
-        </div>
-    </div> 
-</div>
+    <%- include('includes/end.ejs') %>

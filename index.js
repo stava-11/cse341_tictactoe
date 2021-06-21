@@ -10,9 +10,12 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
-
+const errorController = require('./controllers/errors');
+const User = require('./models/user');
+const flash = require('connect-flash');
 const PORT = process.env.PORT || 5000
 const MONGODB_URI = process.env.MONGODB_URI;
+
 
 const app = express();
 const store = new MongoDBStore({
@@ -20,10 +23,11 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 // const csrfProtection  = csrf();
+app.use(flash());
 
 const cors = require('cors');
 const corsOptions = {
-  origin: "https://ta03-cse341.herokuapp.com/",
+  origin: "https://tictactoe-cse341.herokuapp.com/",
   optionsSuccessStatus: 200
 };
 
@@ -31,7 +35,9 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 // const routes = require('./routes');
-const users = [];
+const playerRoutes = require('./routes/player');
+const authRoutes = require('./routes/auth');
+//const users = [];
 
 app
   .use(cors(corsOptions))
@@ -82,27 +88,20 @@ app.use(
 //   });
 // });
 
-app.get('/editUserProfile', (req, res, next) => {
-  res.render('editUserProfile', { pageTitle: 'Edit Profile' });
-});
-app.get('/dashboard', (req, res, next) => {
-  res.render('dashboard', { pageTitle: 'Dashboard' });
-});
-app.get('/', (req, res, next) => {
-  res.render('index', { pageTitle: 'home page' });
-});
 
-app.get('/users', (req, res, next) => {
-  res.render('users', {
-    pageTitle: 'User',
-    users: users,
-    hasUsers: users.length > 0
+app.use(authRoutes);
+app.use(playerRoutes);
+
+app.get('/500', errorController.get500);
+app.use(errorController.get404);
+app.use((err, req, res, next) => {
+  //res.status(error.httpStatusCode).render(...);
+  //res.redirect('500');
+  res.status(500).render('500', { 
+    pageTitle: 'Error Occurred', 
+    path: '/500',
+    //isAuthenticated :  req.session.isLoggedIn 
   });
-});
-
-app.post('/add-user', (req, res, next) => {
-  users.push({ name: req.body.username });
-  res.redirect('/users');
 });
 
 mongoose

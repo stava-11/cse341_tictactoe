@@ -35,7 +35,10 @@ li a:hover:not(.active) {
 
 
 <ul>
-    <li><a class="active" href="#home">Home</a></li>
-    <li><a href="#editProfile">Edit Profile</a></li>
-    <li style="float:right"><a href="#Logout">Logout</a></li>
+    <li><a class="active" href="/dashboard">Home</a></li>
+    <li><a href="/editUserProfile">Edit Profile</a></li>
+    <li style="float:right"><!--<a href="/logout">Logout</a><-->
+      <form action="/logout" method="POST"><!--<input type="hidden" name="_csrf" value="">csrfToken<-->
+        <button type="submit">Logout</button>
+    </form></li>
   </ul>

@@ -64,7 +64,7 @@
     padding: 1rem;
     font-size: 1.5rem;
     font-weight: bold;
-    background-color: rgb(255, 209, 92);
+    background-color: rgb(255, 209, 92);/*#FFD15C*/
     border: 3px solid rgba(255, 209, 92, .5);
     border-radius: 5px;
 }
@@ -74,7 +74,7 @@
 }
 
 .winner {
-    background-color: rgb(2, 72, 119);
+    background-color: rgb(2, 72, 119);/*#024877*/
     color: white;
 }
 
