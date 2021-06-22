@@ -133,7 +133,7 @@ button:hover {
     </div>
     <div class="second-half">
         <div class="flex-item-2">
-            <form action="/action_page.php">
+            <form action="/action_page">
                 <div class="container">
                   <h1>Edit Profile</h1>
                   <hr>
@@ -148,6 +148,7 @@ button:hover {
                   <input type="password" placeholder="Enter Password" name="psw" required>
                                 
                   <div class="clearfix">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="saveupbtn">Save</button>
                     <button type="button" class="cancelbtn">Cancel</button>
                   </div>

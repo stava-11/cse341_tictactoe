@@ -21,7 +21,7 @@
                         <label for="password">Password</label>
                         <input class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>" type="password" name="password" id="password" class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>">
                     </div>
-                    <!--<input type="hidden" name="_csrf" value=""> csrfToken<-->
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button class="btn-login" type="submit">Login</button>
                 </form>
             </section>

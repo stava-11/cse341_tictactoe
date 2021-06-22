@@ -13,8 +13,9 @@ const User = require('../models/user');
 exports.getIndex = (req, res, next) => {
     res.render('index', {
         pageTitle: 'tictactoe home',
-        path: '/'
-    })
+        path: '/',
+        //csrfToken: req.scrfToken()
+    });
 };
 exports.getLogin = (req, res, next) => {
     console.log(req.flash('error'));

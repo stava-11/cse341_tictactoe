@@ -31,6 +31,7 @@
                 </table>
                 <form id="game" action="/gamePost">
                 <input type ="hidden" id="gameJson" name="nameJson" value="">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             </form>
                 <button id="reset">Play Again</button>
             </article>

@@ -22,7 +22,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: 'sessions'
 });
-// const csrfProtection  = csrf();
+const csrfProtection  = csrf();
 app.use(flash());
 
 const cors = require('cors');
@@ -61,8 +61,8 @@ app.use(
   })
 );
 
-// app.use(csrfProtection);
-// app.use(flash());
+app.use(csrfProtection);
+//app.use(flash());
 
 // app.use((req, res, next) => {
 //   res.locals.isAuthenticated = req.session.isLoggedIn;
@@ -87,7 +87,11 @@ app.use((req, res, next) => {
   });
 });
 
-
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 app.use(authRoutes);
 app.use(playerRoutes);
 
