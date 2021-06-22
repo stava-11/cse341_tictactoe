@@ -1,5 +1,8 @@
 exports.getProfile = (req, res, next) => {
-    res.render('editUserProfile', { 
+    // if (!req.session.isLoggedIn){
+    //     return res.redirect('login')
+    // }
+    res.render('editUserProfile' , { 
         pageTitle: 'Edit Profile', 
         path: '/editUserProfile' 
     });
