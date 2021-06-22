@@ -18,10 +18,7 @@ const userSchema = new Schema({
         ref: 'User',
         required: true
     },
-    country: {
-        type: String,
-        required: true
-    },
+    
     winPlayer: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -32,10 +29,11 @@ const userSchema = new Schema({
         ref: 'User',
         //required: true
     },
+    accepted: Boolean,
+    play: Boolean,
     win: Boolean,
-
     draw: Boolean,
-    gameGrid: { 
+    gameGrid: { }
         // spaces: [{
         //     one: {
         //         type: Schema.Types.ObjectId,
@@ -84,7 +82,7 @@ const userSchema = new Schema({
         //     }
         // }
         // ]
-    }
+   //}
 
 
 });

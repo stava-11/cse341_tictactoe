@@ -44,6 +44,7 @@ exports.getLogin = (req, res, next) => {
 };
 exports.getSignup = (req, res, next) => {
     //console.log(req.flash('error'));
+    //console.log(req.session.isLoggedIn);
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -85,7 +86,7 @@ exports.postLogin = (req, res, next) => {
         });
     }
 
-    User.findOne({ email: email })//('609583ea3f161a723a332044')//("60947956b893eb8bf3e04661")
+    User.findOne({ email: email })
         .then(user => {
             if (!user) {
                 //req.flash('error', 'Invalid email or password')

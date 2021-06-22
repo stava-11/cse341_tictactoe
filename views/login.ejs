@@ -8,6 +8,9 @@
         <main class="ttt">
             <section class="signUp">
                 <h2>Login To Play</h2>
+                <% if (errorMessage) { %>
+                    <div class ="user-message user-message--error"><%= errorMessage %></div>
+                <% } %>
                 <form class="" action="/login" method="POST">
                     
                     <div class="">

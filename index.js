@@ -37,7 +37,6 @@ app.set('views', 'views');
 // const routes = require('./routes');
 const playerRoutes = require('./routes/player');
 const authRoutes = require('./routes/auth');
-//const users = [];
 
 app
   .use(cors(corsOptions))
@@ -71,22 +70,22 @@ app.use(
 //   next();
 // });
 
-// app.use((req, res, next) => {
-//   if (!req.session.user) {
-//     return next();
-//   }
-//   User.findById(req.session.user._id)
-//   .then(user => {
-//     if (!user) {
-//       return next();
-//     }
-//     req.user = user;
-//     next();
-//   })
-//   .catch(err => {
-//     next(new Error(err));
-//   });
-// });
+app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
+  .then(user => {
+    if (!user) {
+      return next();
+    }
+    req.user = user;
+    next();
+  })
+  .catch(err => {
+    next(new Error(err));
+  });
+});
 
 
 app.use(authRoutes);

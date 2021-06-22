@@ -1,11 +1,13 @@
 <div class="main-header__nav">
     <ul class="main-header__item-list">
+        <% if (!isAuthenticated ) { %>
         <li class="main-header__item">
             <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
         </li>
         <li class="main-header__item">
             <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
         </li>
+        <% } else  {%>
         <li class="main-header__item">
             <form action="/logout" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -13,5 +15,7 @@
             </form>
             
         </li>
+        <% } %>
+    </ul>
 
 </div>
