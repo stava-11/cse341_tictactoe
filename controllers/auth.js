@@ -1,9 +1,13 @@
 //const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
+const { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } = require('constants');
 //const nodemailer = require('nodemailer');
 //const sendgridTransport = require('nodemailer-sendgrid-transport');
 const { validationResult } = require('express-validator');// /check
+
 const User = require('../models/user');
+const GamePlay = require('../models/gamePlay');
+
 // const transporter = nodemailer.createTransport(sendgridTransport({
 //     auth: {
 //         api_key: process.env.API_KEY
@@ -13,9 +17,8 @@ const User = require('../models/user');
 exports.getIndex = (req, res, next) => {
     res.render('index', {
         pageTitle: 'tictactoe home',
-        path: '/',
-        //csrfToken: req.scrfToken()
-    });
+        path: '/'
+    })
 };
 exports.getLogin = (req, res, next) => {
     console.log(req.flash('error'));
@@ -45,7 +48,6 @@ exports.getLogin = (req, res, next) => {
 };
 exports.getSignup = (req, res, next) => {
     //console.log(req.flash('error'));
-    //console.log(req.session.isLoggedIn);
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -67,6 +69,15 @@ exports.getSignup = (req, res, next) => {
         //isAuthenticated: false
     });
 };
+
+
+
+//*************************************************/
+//
+// This takes the user to the dashboard and provides
+// data for the players and current games
+//
+//*************************************************/
 exports.postLogin = (req, res, next) => {
     //req.isLoggedin = true;
     //res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly')
@@ -86,10 +97,10 @@ exports.postLogin = (req, res, next) => {
             validationErrors: errors.array()
         });
     }
-
-    User.findOne({ email: email })
-        .then(user => {
-            if (!user) {
+    
+    User.findOne({ email: email })//('609583ea3f161a723a332044')//("60947956b893eb8bf3e04661")
+        .then(currentUser => {
+            if (!currentUser) {
                 //req.flash('error', 'Invalid email or password')
                 //return res.redirect('/login');
                 return res.status(422).render('login', {//auth/
@@ -103,25 +114,21 @@ exports.postLogin = (req, res, next) => {
                     },
                     validationErrors: []//[{param: 'email', param: 'password'}]
                 });
-            }
-            bcrypt
-                .compare(password, user.password)
+            };
+            return bcrypt
+                .compare(password, currentUser.password)
                 .then(doMatch => {
                     if (doMatch) {
                         req.session.isLoggedIn = true;
-                        req.session.user = user;
-                        return req.session.save(err => {
-                            console.log(err);
-                            res.render('dashboard', {
-                                path: '/dashboard',
-                                pageTitle: 'Dashboard',
-                            });
-                            //res.redirect('/');//where to go?
-                        });
-                    }
+                        req.session.user = currentUser;
+                        req.session.save();
+                        return currentUser;
+                    }   
+                    
                     //req.flash('error', 'Invalid email or password')
                     //res.redirect('/login');
-                    return res.status(422).render('login', {//auth/
+                    else {
+                        return res.status(422).render('login', {//auth/
                         path: '/login',
                         pageTitle: 'Login',
                         errorMessage: 'Invalid email or password.',
@@ -131,27 +138,119 @@ exports.postLogin = (req, res, next) => {
 
                         },
                         validationErrors: []//[{param: 'email', param: 'password'}]
-                    });
+                        });
+                    };
                 })
                 .catch(err => {
                     console.log(err);
                     res.redirect('login');// /
                 });
         })
-        //next();
-        .catch(err => //console.log(err)
-        {
+        .then(currentUser => {
+            const players = User.find();
+            return players;
+        })
+        .then(players => {
+            req.session.players = players;  
+            req.session.save();
+            return players;
+        })
+        .then(players => {
+            const games = GamePlay.find({$or:[ 
+                {player1: req.session.user},
+                {player2: req.session.user}
+            ]
+            });
+            return games;
+        })
+        .then(games => {
+            res.render('dashboard', { 
+                games: games,
+                players: req.session.players,
+                user: req.session.user,
+                pageTitle: 'Dashboard', 
+                path: '/dashboard' 
+            });            
+        })
+        .catch(err => {
             const error = new Error(err);
             error.httpStatusCode = 500;
             return next(error);
-        });
+        }); 
+
+        
 };
+
+
+
+//     User.findOne({ email: email })//('609583ea3f161a723a332044')//("60947956b893eb8bf3e04661")
+//         .then(user => {
+//             if (!user) {
+//                 //req.flash('error', 'Invalid email or password')
+//                 //return res.redirect('/login');
+//                 return res.status(422).render('login', {//auth/
+//                     path: '/login',
+//                     pageTitle: 'Login',
+//                     errorMessage: 'Invalid email or password.',
+//                     oldInput: {
+//                         email: email,
+//                         password: password
+
+//                     },
+//                     validationErrors: []//[{param: 'email', param: 'password'}]
+//                 });
+//             }
+//             bcrypt
+//                 .compare(password, user.password)
+//                 .then(doMatch => {
+//                     if (doMatch) {
+//                         req.session.isLoggedIn = true;
+//                         req.session.user = user;
+//                         console.log(req.session);
+//                         return req.session.save(err => {
+//                             console.log(err);
+//                             res.render('dashboard', {
+//                                 path: '/dashboard',
+//                                 pageTitle: 'Dashboard',
+//                             });
+//                             //res.redirect('/');//where to go?
+//                         });
+//                     }
+//                     //req.flash('error', 'Invalid email or password')
+//                     //res.redirect('/login');
+//                     return res.status(422).render('login', {//auth/
+//                         path: '/login',
+//                         pageTitle: 'Login',
+//                         errorMessage: 'Invalid email or password.',
+//                         oldInput: {
+//                             email: email,
+//                             password: password
+
+//                         },
+//                         validationErrors: []//[{param: 'email', param: 'password'}]
+//                     });
+//                 })
+//                 .catch(err => {
+//                     console.log(err);
+//                     res.redirect('login');// /
+//                 });
+//         })
+//         //next();
+//         .catch(err => //console.log(err)
+//         {
+//             const error = new Error(err);
+//             error.httpStatusCode = 500;
+//             return next(error);
+//         });
+// };
+
 exports.postLogout = (req, res, next) => {
     req.session.destroy(err => {
         console.log(err);
         res.redirect('/');
     });
 }
+
 exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -175,12 +274,13 @@ exports.postSignup = (req, res, next) => {
             validationErrors: errors.array()
         });
     }
-    // User.findOne({ email: email })
-    //     .then(userDoc => {
-    //         if (userDoc) {
-    //             req.flash('error', 'Email already exists. Pick a different one.')
-    //             return res.redirect('/signup');
+    // User.findOne({ name: name })
+    //     .then(nameTaken => {
+    //         if (nameTaken) {
+    //             req.flash('error', 'Name already exists. Pick a different one.')
+    //             return res.redirect('/registration');
     //         }
+    //     })
     bcrypt
         .hash(password, 12)
         .then(hashedPassword => {
@@ -213,6 +313,9 @@ exports.postSignup = (req, res, next) => {
             }
         })
 };
+
+
+
 // exports.getReset = (req, res, next) => {
 //     let message = req.flash('error');
 //     if (message.length > 0) {
