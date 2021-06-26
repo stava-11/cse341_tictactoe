@@ -1,49 +1,86 @@
-let player1 = true; 
+let player1Turn = true; 
 let play = true;
 let clickCount = 0;
-
+let gameWinner;
 let game = {
-    "1": null,
-    "2": null,
-    "3": null,
-    "4": null,
-    "5": null,
-    "6": null,
-    "7": null,
-    "8": null,
-    "9": null,
-    "winner": null
-}
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "",
+    "5": "",
+    "6": "",
+    "7": "",
+    "8": "",
+    "9": ""
+};
 
-document.getElementById("1").addEventListener("click", playerturn);
-document.getElementById("2").addEventListener("click", playerturn);
-document.getElementById("3").addEventListener("click", playerturn);
-document.getElementById("4").addEventListener("click", playerturn);
-document.getElementById("5").addEventListener("click", playerturn);
-document.getElementById("6").addEventListener("click", playerturn);
-document.getElementById("7").addEventListener("click", playerturn);
-document.getElementById("8").addEventListener("click", playerturn);
-document.getElementById("9").addEventListener("click", playerturn);
 
-function playerturn() {
-    if (this.innerHTML == ''){
-        if (play) {
-            if (player1) {
-                this.innerHTML = 'X';
-                game[this.id] = this.innerHTML;
-                console.log(game);
-                player1 = false;
-            }
-            else {
-                this.innerHTML = 'O';
-                game[this.id] = this.innerHTML;
-                console.log(game);
-                player1 = true;
+
+if (document.getElementById("game")) {
+    //window.setTimeout(function(){ document.location.reload(true); }, 15000); // this is to refresh the page every 15 seconds
+    player1Turn = document.getElementById("player1Turn").value;
+    const user = document.getElementById("user").innerText;
+    const player1 = document.getElementById("player1").value;
+    const player2 = document.getElementById("player2").value;
+    console.log(play);
+    console.log(typeof player1Turn);
+    console.log(user);
+    console.log(player1);
+    console.log(player2);
+
+    if (user == player1){
+        document.getElementById("playerNumber").innerHTML = "You are Player 1.";
+        document.getElementById("playerSymbol").innerHTML = "Your symbol is: X";
+    } else {
+        document.getElementById("playerNumber").innerHTML = "You are Player 2.";
+        document.getElementById("playerSymbol").innerHTML = "Your symbol is: O";
+    }
+
+    function playerturn() {
+        if (this.innerHTML == ''){
+            if (play) {
+                if (player1Turn && player1 == user) {
+                    this.innerHTML = 'X';
+                    game[this.id] = this.innerHTML;
+                    console.log(game);
+                    player1Turn = false;
+                    clickCount++;
+                } 
+                if (player2 == user && player1Turn == 'false') {
+                    this.innerHTML = 'O';
+                    game[this.id] = this.innerHTML;
+                    console.log(game);
+                    player1Turn = true;
+                    clickCount++;
+                }
             }
         }
-        clickCount++;
+        console.log("player1Turn");
+        console.log(player1Turn);
+        checkwin();
+        sendJson();
     }
-    checkwin();
+} else {
+    function playerturn() {
+        if (this.innerHTML == ''){
+            if (play) {
+                if (player1Turn) {
+                    this.innerHTML = 'X';
+                    game[this.id] = this.innerHTML;
+                    console.log(game);
+                    player1Turn = false;
+                }
+                else {
+                    this.innerHTML = 'O';
+                    game[this.id] = this.innerHTML;
+                    console.log(game);
+                    player1Turn = true;
+                }
+            }
+            clickCount++;
+        }
+        checkwin();
+    }
 }
 
 function checkwin() {
@@ -81,7 +118,7 @@ function checkwin() {
     if (clickCount == 9 && play == true) {
         document.getElementById("title").innerText = "Tie Game!";
         document.querySelectorAll('#myTable td').forEach(e => e.classList.add("winner"));
-        game["winner"] = "tie";
+        gameWinner = "tie";
         play = false;
     }
 }
@@ -89,12 +126,12 @@ function checkwin() {
 function checkWinner(input, a, b, c){
     if (grid[input].innerHTML === 'X'){
         document.getElementById("title").innerText = "Player 1 Wins!";
-        game["winner"] = "player1";
+        gameWinner = "player1";
         background(a, b, c)
         play = false;
     } else {
         document.getElementById("title").innerText = "Player 2 Wins!";
-        game["winner"] = "player2";
+        gameWinner = "player2";
         background(a, b, c)
         play = false;
     }
@@ -106,15 +143,39 @@ function background(a, b, c){
     grid[c].classList.add("winner");
 }
 
-document.getElementById("reset").addEventListener("click", reset);
+if (document.getElementById("reset")) {
+    document.getElementById("reset").addEventListener("click", reset);
 
-function reset() {
-    document.querySelectorAll('#myTable td').forEach(e => e.innerHTML = "");
-    document.querySelectorAll('#myTable td').forEach(e => e.classList.remove("winner"));
-    document.getElementById("title").innerText = "Tic Tac Toe"
-    player1 = true;
-    play = true;
-    clickCount = 0;
+    function reset() {
+        document.querySelectorAll('#myTable td').forEach(e => e.innerHTML = "");
+        document.querySelectorAll('#myTable td').forEach(e => e.classList.remove("winner"));
+        document.getElementById("title").innerText = "Tic Tac Toe"
+        player1Turn = true;
+        play = true;
+        clickCount = 0;
+    }
 }
 
-console.log(game);
+function sendJson() {
+    const gameGrid = JSON.stringify(game);
+    document.getElementById("play").value = play;
+    console.log("player1Turn");
+    console.log(player1Turn);
+    document.getElementById("player1Turn").value = String(player1Turn);
+    document.getElementById("gameWinner").value = gameWinner;
+    document.getElementById("gameGrid").value = gameGrid;
+    document.getElementById("game").submit();
+}
+
+
+    document.getElementById("1").addEventListener("click", playerturn);
+    document.getElementById("2").addEventListener("click", playerturn);
+    document.getElementById("3").addEventListener("click", playerturn);
+    document.getElementById("4").addEventListener("click", playerturn);
+    document.getElementById("5").addEventListener("click", playerturn);
+    document.getElementById("6").addEventListener("click", playerturn);
+    document.getElementById("7").addEventListener("click", playerturn);
+    document.getElementById("8").addEventListener("click", playerturn);
+    document.getElementById("9").addEventListener("click", playerturn);
+
+
