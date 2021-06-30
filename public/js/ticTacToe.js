@@ -3,17 +3,16 @@ let play = true;
 let clickCount = 0;
 let gameWinner;
 let game = {
-    "1": "",
-    "2": "",
-    "3": "",
-    "4": "",
-    "5": "",
-    "6": "",
-    "7": "",
-    "8": "",
-    "9": ""
-};
-
+        "1": document.getElementById("1").innerHTML,
+        "2": document.getElementById("2").innerHTML,
+        "3": document.getElementById("3").innerHTML,
+        "4": document.getElementById("4").innerHTML,
+        "5": document.getElementById("5").innerHTML,
+        "6": document.getElementById("6").innerHTML,
+        "7": document.getElementById("7").innerHTML,
+        "8": document.getElementById("8").innerHTML,
+        "9": document.getElementById("9").innerHTML
+    };
 
 
 if (document.getElementById("game")) {
@@ -22,12 +21,12 @@ if (document.getElementById("game")) {
     const user = document.getElementById("user").innerText;
     const player1 = document.getElementById("player1").value;
     const player2 = document.getElementById("player2").value;
-    console.log(play);
-    console.log(typeof player1Turn);
-    console.log(user);
-    console.log(player1);
-    console.log(player2);
-
+    clickCount = parseInt(document.getElementById("clickCount").value);
+    if(!clickCount) {
+        clickCount = 0;
+    }
+    console.log(typeof clickcount);
+    console.log('hello');
     if (user == player1){
         document.getElementById("playerNumber").innerHTML = "You are Player 1.";
         document.getElementById("playerSymbol").innerHTML = "Your symbol is: X";
@@ -37,30 +36,35 @@ if (document.getElementById("game")) {
     }
 
     function playerturn() {
-        if (this.innerHTML == ''){
+        if (this.innerHTML === ''){
+            console.log('olah mi amigo');
+            console.log(player1Turn);
             if (play) {
-                if (player1Turn && player1 == user) {
+                if (player1Turn == 'true' && player1 == user) {
+                    console.log(game);
                     this.innerHTML = 'X';
                     game[this.id] = this.innerHTML;
                     console.log(game);
-                    player1Turn = false;
+                    player1Turn = 'false';
                     clickCount++;
+                    checkwin();
+                    clickCount = toString(clickCount)
+                    sendJson();
                 } 
                 if (player2 == user && player1Turn == 'false') {
                     this.innerHTML = 'O';
                     game[this.id] = this.innerHTML;
                     console.log(game);
-                    player1Turn = true;
+                    player1Turn = 'true';
                     clickCount++;
+                    checkwin();
+                    clickCount = toString(clickCount)
+                    sendJson();
                 }
             }
-        }
-        console.log("player1Turn");
-        console.log(player1Turn);
-        checkwin();
-        sendJson();
+        }        
     }
-} else {
+} else { // this section is for anyone not logged in to play against others
     function playerturn() {
         if (this.innerHTML == ''){
             if (play) {
@@ -121,6 +125,9 @@ function checkwin() {
         gameWinner = "tie";
         play = false;
     }
+    ////////////////////////////////////////////////////
+    // NEED TO BE SAVING THE CLICK COUNT BECAUSE IT IS NOT UPDATING THE DATABASE WHEN THERE IS A TIE GAME
+    ////////////////////////////////////////////////////
 }
 
 function checkWinner(input, a, b, c){
@@ -159,10 +166,9 @@ if (document.getElementById("reset")) {
 function sendJson() {
     const gameGrid = JSON.stringify(game);
     document.getElementById("play").value = play;
-    console.log("player1Turn");
-    console.log(player1Turn);
-    document.getElementById("player1Turn").value = String(player1Turn);
+    document.getElementById("player1Turn").value = player1Turn;
     document.getElementById("gameWinner").value = gameWinner;
+    document.getElementById("clickCount").value = clickCount;
     document.getElementById("gameGrid").value = gameGrid;
     document.getElementById("game").submit();
 }
