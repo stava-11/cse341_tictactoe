@@ -1,5 +1,4 @@
 //- id, activePlayer= userModelId, player1=UserModel, player2=UserModel, win, loss, draw, 1=null, 2=null, 3=null, 4=null, 5=null, 6=null, 7=null, 8=null, 9=null
-const { truncate } = require('fs');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -30,6 +29,7 @@ const gameSchema = new Schema({
         type: String,
         required: true
     },
+    clickCount: String,
     gameWinner: String, // Options: player1, player2, tie
     gameGrid: { 
         type: String,
