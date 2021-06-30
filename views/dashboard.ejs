@@ -95,6 +95,7 @@
                 <input type ="hidden" id="player2" name="player2" value="<%= user._id %>">
                 <input type ="hidden" id="player1Country" name="player1Country" value="<%= player.country %>">
                 <input type ="hidden" id="player2Country" name="player2Country" value="<%= user.country %>">
+                <input type ="hidden" id="clickCount" name="clickCount" value="">
                 <input type ="hidden" id="gameWinner" name="gameWinner" value="">
                 <input type ="hidden" id="gameGrid" name="gameGrid" value="">
                 <input type="submit" value="Invite to Play">
@@ -108,21 +109,21 @@
             <% for (let i = 0; i < games.length; i++) { %>
               <% for (let x = 0; x < players.length; x++) { %>
           
-                <% if ((players[x]._id.toString() === games[i].player1.toString() && games[i].player2.toString() == user._id.toString() && games[i].play1Turn ) ) { %>
+                <% if ((players[x]._id.toString() === games[i].player1.toString() && games[i].player2.toString() === user._id.toString() && games[i].player1Turn ) ) { %>
                   <li>
                   <%= players[x].name %>  (waiting)   
                   </li>
                   <br>
                 <% } %>
           
-                <% if ((players[x]._id.toString() === games[i].player2.toString() && games[i].player1.toString() === user._id.toString() && !games[i].play1Turn)) { %>
+                <% if ((players[x]._id.toString() === games[i].player2.toString() && games[i].player1.toString() === user._id.toString() && !games[i].player1Turn)) { %>
                   <li>
                     <%= players[x].name %>  (waiting)   
                   </li><br>
                   
                 <% } %>
           
-                <% if ((players[x]._id.toString() === games[i].player1.toString() && games[i].player2.toString() === user._id.toString() && !games[i].play1Turn)) { %>
+                <% if ((players[x]._id.toString() === games[i].player1.toString() && games[i].player2.toString() === user._id.toString() && !games[i].player1Turn)) { %>
                   <li>
                   <%= players[x].name %>
                   </li>
@@ -134,13 +135,14 @@
                     <input type ="hidden" id="player2" name="player2" value="<%= user._id %>">
                     <input type ="hidden" id="player1Country" name="player1Country" value="<%= players[x].country %>">
                     <input type ="hidden" id="player2Country" name="player2Country" value="<%= user.country %>">
+                    <input type ="hidden" id="clickCount" name="clickCount" value="<%= players[x].clickCount %>">
                     <input type ="hidden" id="gameWinner" name="gameWinner" value="">
                     <input type ="hidden" id="gameGrid" name="gameGrid" value="">
                     <input type="submit" value="Play">
                 </form>
                 <% } %>
 
-                <% if ((players[x]._id.toString() === games[i].player2.toString() && games[i].player1.toString() === user._id.toString() && games[i].play1Turn)) { %>
+                <% if ((players[x]._id.toString() === games[i].player2.toString() && games[i].player1.toString() === user._id.toString() && games[i].player1Turn)) { %>
                   <li>
                   <%= players[x].name %>
                   </li>
@@ -152,16 +154,12 @@
                     <input type ="hidden" id="player2" name="player2" value="<%= players[x]._id %>">
                     <input type ="hidden" id="player1Country" name="player1Country" value="<%= user.country %>">
                     <input type ="hidden" id="player2Country" name="player2Country" value="<%= players[x].country %>">
+                    <input type ="hidden" id="clickCount" name="clickCount" value="<%= players[x].clickCount %>">
                     <input type ="hidden" id="gameWinner" name="gameWinner" value="">
                     <input type ="hidden" id="gameGrid" name="gameGrid" value="">
                     <input type="submit" value="Play">
                 </form>
                 <% } %>
-
-
-
-                
-          
               <% } %>
             <% } %>
           </ol>
