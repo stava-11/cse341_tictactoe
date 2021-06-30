@@ -21,6 +21,7 @@ router.post(
     // ],
     authController.postLogin
 );
+
 router.post(
     '/signup',
     [   check('name')
