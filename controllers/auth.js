@@ -1,6 +1,6 @@
 //const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } = require('constants');
+// const { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } = require('constants');
 //const nodemailer = require('nodemailer');
 //const sendgridTransport = require('nodemailer-sendgrid-transport');
 const { validationResult } = require('express-validator');// /check
@@ -20,6 +20,8 @@ exports.getIndex = (req, res, next) => {
         path: '/'
     })
 };
+
+
 exports.getLogin = (req, res, next) => {
     console.log(req.flash('error'));
     let message = req.flash('error');
@@ -46,6 +48,8 @@ exports.getLogin = (req, res, next) => {
         //isAuthenticated: false//isLoggedIn//req.isLoggedIn//false
     });
 };
+
+
 exports.getSignup = (req, res, next) => {
     //console.log(req.flash('error'));
     let message = req.flash('error');
@@ -177,8 +181,6 @@ exports.postLogin = (req, res, next) => {
             error.httpStatusCode = 500;
             return next(error);
         }); 
-
-        
 };
 
 
