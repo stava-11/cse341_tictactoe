@@ -31,7 +31,8 @@
                 </table>
                 <p id="playerNumber"></p>
                 <p id="playerSymbol"></p>
-                <p id="user"><%= user._id %></p>
+                <p id="user" hidden><%= user._id %></p>
+                <a class="active" href="/dashboard">Back To Games</a>
                 <form hidden id="game" action="/postPlayerMove" method="POST">
                     <input type ="hidden" id="_id" name="_id" value="<%= gameDetails._id %>">
                     <input type ="hidden" id="play" name="play" value="<%= gameDetails.play %>">
@@ -41,8 +42,10 @@
                     <input type ="hidden" id="clickCount" name="clickCount" value="<%= gameDetails.clickCount %>">
                     <input type ="hidden" id="gameWinner" name="gameWinner" value="<%= gameDetails.gameWinner %>">
                     <input type ="hidden" id="gameGrid" name="gameGrid" value="<%= gameDetails.gameGrid %>">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 </form>
             </article>
+                
         </section>
     </main>
 

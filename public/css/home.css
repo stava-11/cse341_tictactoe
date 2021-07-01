@@ -1,5 +1,6 @@
 .ttt {
     margin: 1rem auto;
+    padding: 20px;
     width: fit-content;
     text-align: center;
 } 
@@ -12,7 +13,7 @@
 .ttt table {
     padding: 0;
     border-spacing: 0;
-    margin: 2rem auto 1rem;
+    margin: 2rem;
 }
 
 .ttt tr {
@@ -58,7 +59,7 @@
 }
 
 .ttt button {
-    max-width: 300px;
+    width: fit-content;
     height: auto;
     margin: 2rem auto;
     padding: 1rem;

@@ -2,34 +2,39 @@ const User = require('../models/user');
 const GamePlay = require('../models/gamePlay');
 
 exports.getProfile = (req, res, next) => {
-    res.render('editUserProfile', { 
-        pageTitle: 'Edit Profile', 
-        path: '/editUserProfile' 
+    res.render('editUserProfile', {
+        pageTitle: 'Edit Profile',
+        path: '/editUserProfile'
     });
 };
-
-// original version
 // exports.getDashboard = (req, res, next) => {
-//     res.render('dashboard', { 
-//         pageTitle: 'Dashboard', 
-//         path: '/dashboard' 
+//     res.render('dashboard', {
+//         pageTitle: 'Dashboard',
+//         path: '/dashboard'
 //     });
 // };
 
 exports.getDashboard = (req, res, next) => {
-    const gameDetails = {};
+    //const gameDetails = {};
     User.find()
         .then(players => {
-            gameDetails.players = players
-            return gameDetails;  
-        }).then(gameDetails => {
-            gameDetails.games = GamePlay.find({ player2: req.session.user });
-            return gameDetails;
-        }).then(gameDetails => {
-            //console.log(gameDetails.games);
+            req.session.players = players;
+            req.session.save();
+            return players;  
+        }).then(players => {
+            console.log(req.session.user);
+            const games = GamePlay.find({$or:[ 
+                {player1: req.session.user},
+                {player2: req.session.user}
+            ]
+            });
+            console.log('here dummy!')
+            return games;
+        }).then(games => {
+            console.log(games);
             res.render('dashboard', { 
-                games: gameDetails.games,
-                players: gameDetails.players,
+                games: games,
+                players: req.session.players,
                 user: req.session.user,
                 pageTitle: 'Dashboard', 
                 path: '/dashboard' 
@@ -40,7 +45,6 @@ exports.getDashboard = (req, res, next) => {
             error.httpStatusCode = 500;
             return next(error);
           });
-      
 };
 
 exports.getPlayGame = (req, res, next) => {
@@ -67,6 +71,7 @@ exports.getPlayGame = (req, res, next) => {
     if (gameDetails.player1Turn === 'false'){
         gameDetails.player1Turn = false;
     } else if (gameDetails.player1Turn === 'true'){
+
         gameDetails.player1Turn = true;
     }
 
@@ -75,6 +80,7 @@ exports.getPlayGame = (req, res, next) => {
         function(err, result){
             if(err){
                 res.send(err) 
+
             } else {
                 return result
             }
@@ -106,7 +112,6 @@ exports.postPlayerMove = (req, res, next) => {
         gameWinner: req.body.gameWinner,
         gameGrid: req.body.gameGrid
     };
-    
     console.log(typeof gameDetails.clickCount);
 
     console.log(gameDetails.clickCount);
@@ -118,9 +123,11 @@ exports.postPlayerMove = (req, res, next) => {
         clickCount: gameDetails.clickCount,
         gameWinner: gameDetails.gameWinner,
         gameGrid: gameDetails.gameGrid},
+        {new: true},
         function(err, result){
             if(err){
                 res.send(err) 
+
             } else {
                 return result
             }
@@ -152,7 +159,6 @@ exports.postPlayerMove = (req, res, next) => {
     })
 
 }
-
 
 
 exports.postGamePlay = (req, res, next) => {
@@ -188,6 +194,7 @@ exports.postGamePlay = (req, res, next) => {
                 pageTitle: 'Dashboard', 
                 path: '/dashboard' 
             });            
+
         })
         .catch(err => {
             const error = new Error(err);
@@ -195,3 +202,4 @@ exports.postGamePlay = (req, res, next) => {
             return next(error);
         });
 }
+

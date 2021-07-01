@@ -17,8 +17,9 @@ const GamePlay = require('../models/gamePlay');
 exports.getIndex = (req, res, next) => {
     res.render('index', {
         pageTitle: 'tictactoe home',
-        path: '/'
-    })
+        path: '/',
+        //csrfToken: req.scrfToken()
+    });
 };
 
 
@@ -30,12 +31,6 @@ exports.getLogin = (req, res, next) => {
     } else {
         message = null;
     }
-    //console.log(req.get('Cookie')//)
-    /*const isLoggedIn = req
-        .get('Cookie')
-        .split(';')[0]
-        .trim()
-        .split('=')[1] === 'true';*/
     res.render('login', {//auth
         path: '/login',
         pageTitle: 'Login',
@@ -52,6 +47,7 @@ exports.getLogin = (req, res, next) => {
 
 exports.getSignup = (req, res, next) => {
     //console.log(req.flash('error'));
+    //console.log(req.session.isLoggedIn);
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -74,8 +70,6 @@ exports.getSignup = (req, res, next) => {
     });
 };
 
-
-
 //*************************************************/
 //
 // This takes the user to the dashboard and provides
@@ -83,8 +77,6 @@ exports.getSignup = (req, res, next) => {
 //
 //*************************************************/
 exports.postLogin = (req, res, next) => {
-    //req.isLoggedin = true;
-    //res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly')
 
     const email = req.body.email;
     const password = req.body.password;
@@ -101,8 +93,9 @@ exports.postLogin = (req, res, next) => {
             validationErrors: errors.array()
         });
     }
-    
-    User.findOne({ email: email })//('609583ea3f161a723a332044')//("60947956b893eb8bf3e04661")
+
+
+    User.findOne({ email: email })
         .then(currentUser => {
             if (!currentUser) {
                 //req.flash('error', 'Invalid email or password')
@@ -128,9 +121,6 @@ exports.postLogin = (req, res, next) => {
                         req.session.save();
                         return currentUser;
                     }   
-                    
-                    //req.flash('error', 'Invalid email or password')
-                    //res.redirect('/login');
                     else {
                         return res.status(422).render('login', {//auth/
                         path: '/login',
@@ -160,21 +150,25 @@ exports.postLogin = (req, res, next) => {
             return players;
         })
         .then(players => {
-            const games = GamePlay.find({$or:[ 
-                {player1: req.session.user},
-                {player2: req.session.user}
-            ]
+            console.log('Auth.js/postLogin/players:', players);
+            const games = GamePlay.find({$or:[
+                    { player1: req.session.user },
+                    { player2: req.session.user }
+                ]
             });
+            console.log('games: ', games);
             return games;
         })
         .then(games => {
+            console.log('there dummy');
+            console.log(games);
             res.render('dashboard', { 
                 games: games,
                 players: req.session.players,
                 user: req.session.user,
                 pageTitle: 'Dashboard', 
                 path: '/dashboard' 
-            });            
+            });        
         })
         .catch(err => {
             const error = new Error(err);

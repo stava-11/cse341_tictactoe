@@ -39,12 +39,15 @@
                     <p>Sign up to begin the competition!</p>
                     <form action="/signup" method="POST">
                         <!--<label>Enter name: <input type="text" name="username" placeholder="name"></label><-->
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>"> 
                         <button type="submit">Join</button>
                     </form>
                     <a href="/signup">Join</a>
                     <a href="/login">Login</a>
+                    
                 </section>
                
             </main>
             <script src="/js/ticTacToe.js"></script>
+
             <%- include('includes/end.ejs') %>

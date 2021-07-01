@@ -17,6 +17,7 @@ let game = {
 
 if (document.getElementById("game")) {
     //window.setTimeout(function(){ document.location.reload(true); }, 15000); // this is to refresh the page every 15 seconds
+    checkwin();
     player1Turn = document.getElementById("player1Turn").value;
     const user = document.getElementById("user").innerText;
     const player1 = document.getElementById("player1").value;
@@ -35,9 +36,10 @@ if (document.getElementById("game")) {
         document.getElementById("playerSymbol").innerHTML = "Your symbol is: O";
     }
 
+
     function playerturn() {
         if (this.innerHTML === ''){
-            console.log('olah mi amigo');
+            console.log('hola mi amigo');
             console.log(player1Turn);
             if (play) {
                 if (player1Turn == 'true' && player1 == user) {
@@ -65,6 +67,7 @@ if (document.getElementById("game")) {
         }        
     }
 } else { // this section is for anyone not logged in to play against others
+
     function playerturn() {
         if (this.innerHTML == ''){
             if (play) {
@@ -144,6 +147,7 @@ function checkWinner(input, a, b, c){
     }
 }
 
+//changes the background color when the game is over
 function background(a, b, c){
     grid[a].classList.add("winner");
     grid[b].classList.add("winner");
@@ -183,5 +187,3 @@ function sendJson() {
     document.getElementById("7").addEventListener("click", playerturn);
     document.getElementById("8").addEventListener("click", playerturn);
     document.getElementById("9").addEventListener("click", playerturn);
-
-
