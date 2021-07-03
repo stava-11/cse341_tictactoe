@@ -5,15 +5,14 @@
 
     <body>
         <header>
-            <!--<a href="/">Enter User</a> | <a href="/users">Users</a><-->
-
+            
         </header>
 
         <body>
             <main>
                 <section class="ttt">
                     <h1 class="gameTitle" id="title">Tic Tac Toe</h1>
-                    <article>
+                    <article class="white-bg">
                         <table id="myTable">
                             <tr>
                                 <td id="1"></td>
@@ -34,14 +33,14 @@
                         <button id="reset">Play Again</button>
                     </article>
                 </section>
-                <section class="signUp">
+                <section class="signUp white-bg centered">
                     <h2>Play against players around the world!</h2>
                     <p>Sign up to begin the competition!</p>
-                    <form action="/signup" method="POST">
+        <!--    <form action="/signup" method="POST">-->
                         <!--<label>Enter name: <input type="text" name="username" placeholder="name"></label><-->
-                        <input type="hidden" name="_csrf" value="<%= csrfToken %>"> 
+                     <!--   <input type="hidden" name="_csrf" value=""> csrfToken
                         <button type="submit">Join</button>
-                    </form>
+                    </form>-->
                     <a href="/signup">Join</a>
                     <a href="/login">Login</a>
                     

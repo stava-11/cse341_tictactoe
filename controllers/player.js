@@ -7,12 +7,6 @@ exports.getProfile = (req, res, next) => {
         path: '/editUserProfile'
     });
 };
-// exports.getDashboard = (req, res, next) => {
-//     res.render('dashboard', {
-//         pageTitle: 'Dashboard',
-//         path: '/dashboard'
-//     });
-// };
 
 exports.getDashboard = (req, res, next) => {
     //const gameDetails = {};
@@ -28,13 +22,13 @@ exports.getDashboard = (req, res, next) => {
                 {player2: req.session.user}
             ]
             });
-            console.log('here dummy!')
-            return games;
+            return games
         }).then(games => {
             console.log(games);
             res.render('dashboard', { 
                 games: games,
                 players: req.session.players,
+                weather: req.session.weather,
                 user: req.session.user,
                 pageTitle: 'Dashboard', 
                 path: '/dashboard' 
@@ -45,7 +39,52 @@ exports.getDashboard = (req, res, next) => {
             error.httpStatusCode = 500;
             return next(error);
           });
+
+        //////////////////////////////////////////////
+        // Need to add in the weather information here
+        //////////////////////////////////////////////
 };
+
+// exports.postDashboard = (req, res, next) => {
+//     //const gameDetails = {};
+//     console.log('player/postDashboard:');
+//     const location = {
+//         location: req.body
+//     };
+
+//     console.log('player/postDashboard:', location);
+//     User.find()
+//         .then(players => {
+//             req.session.players = players;
+//             req.session.save();
+//             return players;  
+//         }).then(players => {
+//             const games = GamePlay.find({$or:[ 
+//                 {player1: req.session.user},
+//                 {player2: req.session.user}
+//             ]
+//             });
+//             return games;
+//         }).then(games => {
+//             res.render('dashboard', { 
+//                 games: games,
+//                 players: req.session.players,
+//                 user: req.session.user,
+//                 pageTitle: 'Dashboard', 
+//                 path: '/dashboard' 
+//             }); 
+//         })
+//         .catch(err => {
+//             const error = new Error(err);
+//             error.httpStatusCode = 500;
+//             return next(error);
+//           });
+
+
+//         //////////////////////////////////////////////
+//         // Need to add in the weather information here
+//         //////////////////////////////////////////////
+// };
 
 exports.getPlayGame = (req, res, next) => {
     const gameDetails = {
@@ -54,8 +93,8 @@ exports.getPlayGame = (req, res, next) => {
         player1Turn: req.body.player1Turn,
         player1: req.body.player1,
         player2: req.body.player2,
-        player1Country: req.body.player1Country,
-        player2Country: req.body.player2Country,
+        // player1Country: req.body.player1Country,
+        // player2Country: req.body.player2Country,
         clickCount: req.body.clickCount,
         gameWinner: req.body.gameWinner,
         gameGrid: req.body.gameGrid
@@ -86,7 +125,6 @@ exports.getPlayGame = (req, res, next) => {
             }
         }
     ).then(result => {
-        console.log(result);
         if (result.gameGrid){
             gameDetails.gameGrid = JSON.parse(result.gameGrid);
             console.log(gameDetails);
@@ -168,13 +206,11 @@ exports.postGamePlay = (req, res, next) => {
         player1Turn: req.body.player1Turn,
         player1: req.body.player1,
         player2: req.body.player2,
-        player1Country: req.body.player1Country,
-        player2Country: req.body.player2Country,
         clickCount: req.body.clickCount,
         gameWinner: req.body.gameWinner,
         gameGrid: req.body.gameGrid
     });
-
+    console.log('player.js/postGamePlay:', gamePlay);
     gamePlay.save()
         .then(result => {
             console.log('Created New Game');
@@ -201,5 +237,9 @@ exports.postGamePlay = (req, res, next) => {
             error.httpStatusCode = 500;
             return next(error);
         });
+
+        //////////////////////////////////////////////
+        // Need to add in the weather information here
+        //////////////////////////////////////////////
 }
 

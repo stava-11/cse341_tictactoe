@@ -1,0 +1,35 @@
+<%- include('includes/head.ejs') %>
+    </head>
+
+    <body>
+
+        <main>
+            <div class="form-container">
+                <div class="main-form">
+                  <div class="form-header">
+                    <h2 class="form-title">Reset Password</h2>
+                </div>
+            <% if (errorMessage) { %>
+                <div class="user-message user-message--error">
+                    <%= errorMessage %>
+                </div>
+                <% } %>
+                <!--<div class="">
+                    <h2 class="centered">Reset Password!</h2><-->
+
+                    <form class="" action="/reset" method="POST">
+                        <div>
+                            <label for="email">Email</label>
+                            <input type="email" name="email" id="email">
+                        </div>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button class="btn black-bg" type="submit">Reset</button>
+                    </form>
+                </div>
+            </div>
+            
+
+        </main>
+
+
+        <%- include('includes/end.ejs') %>

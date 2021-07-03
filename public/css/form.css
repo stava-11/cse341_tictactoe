@@ -1,0 +1,71 @@
+.main-form {
+    background-color: #f2f2f2;
+    width: 40%;
+    padding: 40px;
+    border-radius: 25px;
+    border: 2px solid black;
+}
+
+.form-container {
+    height: 800px;  /* Change this for all sizes */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-title {
+    text-align: center;
+    font-size: xx-large;
+}
+
+/* Full-width input fields */
+
+input[type="email"], input[type="password"], input[type="password"], input[type=text] {
+    max-width: 400px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border-radius: 25px;
+    border: 2px solid black;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.form-btn-container {
+    display: flex;
+}
+
+.btn, a:link, a:visited {
+    border: none;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 20px;
+    cursor: pointer;
+    border-radius: 12px;
+    max-width: 150px;
+    border: 2px solid black;
+    opacity: 0.75
+}
+
+.btn:hover, a:hover {opacity: 1}
+
+.btn-login, .save-btn {
+    background-color: #F5DF4E;
+    color: black;
+}
+
+.btn-signup, .cancel-btn, a:link, a:visited {
+    background-color: #51E0FF;
+    color: black;
+    list-style-type: none;
+    text-decoration: none;
+}

@@ -22,14 +22,14 @@ const gameSchema = new Schema({
         ref: 'User',
         required: true
     },
-    player1Country: {
-        type: String,
-        required: true
-    },
-    player2Country: {
-        type: String,
-        required: true
-    },
+    // player1Country: {
+    //     type: String,
+    //     required: true
+    // },
+    // player2Country: {
+    //     type: String,
+    //     required: true
+    // },
     clickCount: String,
     gameWinner: String, // Options: player1, player2, tie
     gameGrid: { 

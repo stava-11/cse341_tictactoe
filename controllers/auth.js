@@ -1,24 +1,28 @@
-//const crypto = require('crypto');
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-// const { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } = require('constants');
-//const nodemailer = require('nodemailer');
-//const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
 const { validationResult } = require('express-validator');// /check
 
 const User = require('../models/user');
 const GamePlay = require('../models/gamePlay');
 
-// const transporter = nodemailer.createTransport(sendgridTransport({
-//     auth: {
-//         api_key: process.env.API_KEY
-//     }
-// }))
-//     ;
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const fetch = require('node-fetch');
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+    auth: {
+        api_key: process.env.API_KEY
+    }
+}));
+
+    
 exports.getIndex = (req, res, next) => {
     res.render('index', {
         pageTitle: 'tictactoe home',
         path: '/',
-        //csrfToken: req.scrfToken()
     });
 };
 
@@ -60,7 +64,7 @@ exports.getSignup = (req, res, next) => {
         errorMessage: message,
         oldInput: {
             name: '',
-            country: '',
+            // country: '',
             email: '',
             password: '',
             confirmPassword: ''
@@ -118,10 +122,11 @@ exports.postLogin = (req, res, next) => {
                     if (doMatch) {
                         req.session.isLoggedIn = true;
                         req.session.user = currentUser;
+                        req.session.latitude = req.body.latitude;
+                        req.session.longitude = req.body.longitude;
                         req.session.save();
                         return currentUser;
-                    }   
-                    else {
+                    } else {
                         return res.status(422).render('login', {//auth/
                         path: '/login',
                         pageTitle: 'Login',
@@ -137,10 +142,22 @@ exports.postLogin = (req, res, next) => {
                 })
                 .catch(err => {
                     console.log(err);
-                    res.redirect('login');// /
+                    res.redirect('login');
                 });
         })
         .then(currentUser => {
+            console.log('latitude');
+            console.log(req.session.latitude);
+            const apiURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${req.session.latitude}&lon=${req.session.longitude}&units=imperial&appid=${WEATHER_API_KEY}`;
+            return fetch(apiURL)
+            .then(response => response.json())
+            .then(jsObject => {
+                req.session.weather = jsObject;
+                req.session.save();
+                return jsObject
+            });
+        })
+        .then(jsObject  => {
             const players = User.find();
             return players;
         })
@@ -150,22 +167,20 @@ exports.postLogin = (req, res, next) => {
             return players;
         })
         .then(players => {
-            console.log('Auth.js/postLogin/players:', players);
-            const games = GamePlay.find({$or:[
+            const games = GamePlay.find({
+                $or: [
                     { player1: req.session.user },
                     { player2: req.session.user }
                 ]
             });
-            console.log('games: ', games);
             return games;
         })
         .then(games => {
-            console.log('there dummy');
-            console.log(games);
-            res.render('dashboard', { 
+            res.render('dashboard', {
                 games: games,
                 players: req.session.players,
                 user: req.session.user,
+                weather: req.session.weather,
                 pageTitle: 'Dashboard', 
                 path: '/dashboard' 
             });        
@@ -174,12 +189,27 @@ exports.postLogin = (req, res, next) => {
             const error = new Error(err);
             error.httpStatusCode = 500;
             return next(error);
-        }); 
+        });
+
+        //////////////////////////////////////////////
+        // Need to add in the weather information here
+        // 1) Comment Out all this codeChange all country info to long/lat
+        //    A) Database
+        //    B) EJS Pages
+        //    C) Controller
+        // 2) Get long/lat from:
+        //    https://developer.mozilla.org/en-US/docs/Web/API/GeolocationCoordinates/longitude
+        //    This can be done anytime the user is logged into the dashboard and does not need
+        //    to be saved in the database, that way it changes as they travel.
+        // 4) show weather for current user in the dashboard
+        //////////////////////////////////////////////
+
 };
 
 
 
-//     User.findOne({ email: email })//('609583ea3f161a723a332044')//("60947956b893eb8bf3e04661")
+
+//     User.findOne({ email: email })
 //         .then(user => {
 //             if (!user) {
 //                 //req.flash('error', 'Invalid email or password')
@@ -251,7 +281,7 @@ exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const name = req.body.name;
-    const country = req.body.country;
+    // const country = req.body.country;
     //const confirmPassword = req.body.confirmPassword;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -262,7 +292,7 @@ exports.postSignup = (req, res, next) => {
             errorMessage: errors.array()[0].msg,
             oldInput: {
                 name: name,
-                country: country,
+                // country: country,
                 email: email,
                 password: password,
                 confirmPassword: req.body.confirmPassword
@@ -282,7 +312,7 @@ exports.postSignup = (req, res, next) => {
         .then(hashedPassword => {
             const user = new User({
                 name: name,
-                country: country,
+                // country: country,
                 email: email,
                 password: hashedPassword,
 
@@ -310,115 +340,116 @@ exports.postSignup = (req, res, next) => {
         })
 };
 
+exports.getReset = (req, res, next) => {
+    console.log("inside getReset");
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
+    console.log("reset message", message);
+    res.render('reset', {//auth
+        path: '/reset',
+        pageTitle: 'Reset Password',
+        errorMessage: message
+    });
+}
+
+exports.postReset = (req, res, next) => {
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err) {
+            console.log(err);
+            return res.redirect('/reset');
+        }
+        const token = buffer.toString('hex');
+        User.findOne({ email: req.body.email })
+            .then(user => {
+                if (!user) {
+                    req.flash('error', 'No account with that email found.');
+                    return res.redirect('/reset');
+                }
+                user.resetToken = token;
+                user.resetTokenExpiration = Date.now() + 3600000;
+                return user.save();
+            })
+            .then(result => {
+                res.redirect('/');
+                transporter.sendMail({
+                    to: req.body.email,
+                    from: 'str19023@byui.edu',
+                    subject: 'Password Reset',
+                    html: `<p>You requested a password reset</p>
+            <p>Click this <a href=
+            "http://localhost:5000/reset/${token}">link</a> to set a new password.</p>
+            `
+                });//*****!!!change address before heroku push */
+
+            })
+            .catch(err => { //console.log(err); 
+                const error = new Error(err);
+                error.httpStatusCode = 500;
+                return next(error);
+            });
+    });
+}
+exports.getNewPassword = (req, res, next) => {
+    const token = req.params.token;
+    User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+        .then(
+            user => {
+                let message = req.flash('error');
+                if (message.length > 0) {
+                    message = message[0];
+                } else {
+                    message = null;
+                }
+                res.render('newPass', {// auth/
+                    path: '/newPass',
+                    pageTitle: 'New Password',
+                    errorMessage: message,
+                    userId: user._id.toString(),
+                    passwordToken: token
+                });
+            }
+        )
+        .catch(err => {
+            //console.log(err);
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+        });
 
 
-// exports.getReset = (req, res, next) => {
-//     let message = req.flash('error');
-//     if (message.length > 0) {
-//         message = message[0];
-//     } else {
-//         message = null;
-//     }
-//     res.render('auth/reset', {
-//         path: '/reset',
-//         pageTitle: 'Reset Password',
-//         errorMessage: message
-//     });
-// }
-// exports.postReset = (req, res, next) => {
-//     crypto.randomBytes(32, (err, buffer) => {
-//         if (err) {
-//             console.log(err);
-//             return res.redirect('/reset');
-//         }
-//         const token = buffer.toString('hex');
-//         User.findOne({ email: req.body.email })
-//             .then(user => {
-//                 if (!user) {
-//                     req.flash('error', 'No account with that email found.');
-//                     return res.redirect('/reset');
-//                 }
-//                 user.resetToken = token;
-//                 user.resetTokenExpiration = Date.now() + 3600000;
-//                 return user.save();
-//             })
-//             .then(result => {
-//                 res.redirect('/');
-//                 transporter.sendMail({
-//                     to: req.body.email,
-//                     from: 'str19023@byui.edu',
-//                     subject: 'Password Reset',
-//                     html: `<p>You requested a password reset</p>
-//             <p>Click this <a href=
-//             "http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
-//             `
-//                 });
+}
+exports.postNewPassword = (req, res, next) => {
+    const newPassword = req.body.password;
+    const userId = req.body.userId;
+    const passwordToken = req.body.passwordToken;
+    let resetUser;
 
-//             })
-//             .catch(err => { //console.log(err); 
-//                 const error = new Error(err);
-//                 error.httpStatusCode = 500;
-//                 return next(error);
-//             });
-//     });
-// }
-// exports.getNewPassword = (req, res, next) => {
-//     const token = req.params.token;
-//     User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
-//         .then(
-//             user => {
-//                 let message = req.flash('error');
-//                 if (message.length > 0) {
-//                     message = message[0];
-//                 } else {
-//                     message = null;
-//                 }
-//                 res.render('auth/new-password', {
-//                     path: '/new-password',
-//                     pageTitle: 'New Password',
-//                     errorMessage: message,
-//                     userId: user._id.toString(),
-//                     passwordToken: token
-//                 });
-//             }
-//         )
-//         .catch(err => {
-//             //console.log(err);
-//             const error = new Error(err);
-//             error.httpStatusCode = 500;
-//             return next(error);
-//         });
+    User.findOne({
+        resetToken: passwordToken,
+        resetTokenExpiration: { $gt: Date.now() },
+        _id: userId
+    })
+        .then(user => {
+            resetUser = user;
+            return bcrypt.hash(newPassword, 12);
+        })
+        .then(hashedPassword => {
+            resetUser.password = hashedPassword;
+            resetUser.resetToken = undefined;
+            resetUser.resetTokenExpiration = undefined;
+            return resetUser.save();
 
-
-// }
-// exports.postNewPassword = (req, res, next) => {
-//     const newPassword = req.body.password;
-//     const userId = req.body.userId;
-//     const passwordToken = req.body.passwordToken;
-//     let resetUser;
-
-//     User.findOne({
-//         resetToken: passwordToken,
-//         resetTokenExpiration: { $gt: Date.now() },
-//         _id: userId
-//     })
-//         .then(user => {
-//             resetUser = user;
-//             return bcrypt.hash(newPassword, 12);
-//         })
-//         .then(hashedPassword => {
-//             resetUser.password = hashedPassword;
-//             resetUser.resetToken = undefined;
-//             resetUser.resetTokenExpiration = undefined;
-//             return resetUser.save();
-
-//         }).then(result => {
-//             res.redirect('/login');
-//         })
-//         .catch(err => {
-//             //console.log(err);
-//             const error = new Error(err);
-//             error.httpStatusCode = 500;
-//             return next(error);
-//         });
-// }
+        }).then(result => {
+            res.redirect('/login');
+        })
+        .catch(err => {
+            //console.log(err);
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+        });
+}
