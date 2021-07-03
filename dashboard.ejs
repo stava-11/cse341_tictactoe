@@ -1,0 +1,113 @@
+<%- include('includes/head.ejs') %>
+</head>
+
+<body>
+  <div class="main-background">
+      <h1>Hello <%= user.name %></h1>
+    <div class="flex-container">
+      <div class="first-half">
+        <% if (weather) { %>
+        <div class="flex-item">
+          <!-- <img src="https://openweathermap.org/img/w/<%= weather.current.weather[0].icon %>.png" alt="weather icon"> -->
+          <p><%= weather.current.temp %>&deg : <%= weather.current.weather[0].description %></p>
+        </div>
+        <% } %>
+        <div class="flex-item">
+          <a class="btn-dash" href="/editUserProfile">Edit Profile</a>
+        </div>
+        <div class="flex-item">
+          <form action="/logout" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn-dash">Logout</button>
+        </form>
+        </div>
+      </div>
+
+      <div class="second-half">
+        <div class="flex-item-2">
+          <h2>Players</h2>
+          <ol class="scroll">
+            <% players.forEach(player => { %>
+              <% if (player.name != user.name) { %>
+              <li>
+                  <%= player.name %>
+              </li>
+              <form id="game" action="/postGamePlay" method="POST">
+                <input type="hidden" id="play" name="play" value="false">
+                <input type="hidden" id="player1Turn" name="player1Turn" value="true">
+                <input type="hidden" id="player1" name="player1" value="<%= player._id %>">
+                <input type="hidden" id="player2" name="player2" value="<%= user._id %>">
+                <input type="hidden" id="clickCount" name="clickCount" value="">
+                <input type="hidden" id="gameWinner" name="gameWinner" value="">
+                <input type="hidden" id="gameGrid" name="gameGrid" value="">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="submit" value="Invite to Play">
+            </form><br>
+            <% }}); %>
+          </ol>
+        </div>
+        
+        <div class="flex-item-2">
+          <h2>Current Games</h2>
+          <ol class="scroll">
+            <% for (let i = 0; i < games.length; i++) { %>
+              <% for (let x = 0; x < players.length; x++) { %>
+          
+                <% if ((players[x]._id.toString() === games[i].player1.toString() && games[i].player2.toString() === user._id.toString() && games[i].player1Turn ) ) { %>
+                  <li>
+                    <%= players[x].name %> (waiting)   
+                  </li>
+                  <br>
+                <% } %>
+          
+                <% if ((players[x]._id.toString() === games[i].player2.toString() && games[i].player1.toString() === user._id.toString() && !games[i].player1Turn)) { %>
+                  <li>
+                    <%= players[x].name %> (waiting)   
+                  </li><br>
+                  
+                <% } %>
+          
+                <% if ((players[x]._id.toString() === games[i].player1.toString() && games[i].player2.toString() === user._id.toString() && !games[i].player1Turn)) { %>
+                  <li>
+                  <%= players[x].name %>
+                  </li>
+                  <form id="game" action="/playGame" method="POST">
+                    <input type="hidden" id="gamePlay_id" name="gamePlay_id" value="<%= games[i]._id %>">
+                    <input type="hidden" id="play" name="play" value="true">
+                    <input type="hidden" id="player1Turn" name="player1Turn" value="false">
+                    <input type="hidden" id="player1" name="player1" value="<%= players[x]._id %>">
+                    <input type="hidden" id="player2" name="player2" value="<%= user._id %>">
+                    <input type="hidden" id="clickCount" name="clickCount" value="<%= players[x].clickCount %>">
+                    <input type="hidden" id="gameWinner" name="gameWinner" value="">
+                    <input type="hidden" id="gameGrid" name="gameGrid" value="">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="submit" value="Play">
+                </form>
+                <% } %>
+                <% if ((players[x]._id.toString() === games[i].player2.toString() && games[i].player1.toString() === user._id.toString() && games[i].player1Turn)) { %>
+                  <li>
+                  <%= players[x].name %>
+                  </li>
+                  <form id="game" action="/playGame" method="POST">
+                    <input type="hidden" id="gamePlay_id" name="gamePlay_id" value="<%= games[i]._id %>">
+                    <input type="hidden" id="play" name="play" value="true">
+                    <input type="hidden" id="player1Turn" name="player1Turn" value="true">
+                    <input type="hidden" id="player1" name="player1" value="<%= user._id %>">
+                    <input type="hidden" id="player2" name="player2" value="<%= players[x]._id %>">
+                    <input type="hidden" id="clickCount" name="clickCount" value="<%= players[x].clickCount %>">
+                    <input type="hidden" id="gameWinner" name="gameWinner" value="">
+                    <input type="hidden" id="gameGrid" name="gameGrid" value="">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="submit" value="Play">
+                </form>
+                <% } %>
+              <% } %>
+            <% } %>
+          </ol>
+        </div>
+      </div> <!-- Second -->
+    </div>
+    </div>
+  </div>
+  <script src="/js/dashboardRefresh.js"></script>
+<%- include('includes/end.ejs') %>
