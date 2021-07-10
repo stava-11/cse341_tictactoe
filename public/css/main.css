@@ -1,9 +1,11 @@
 body {
   background-image: url("https://st2.depositphotos.com/31939724/46264/v/600/depositphotos_462641316-stock-illustration-tic-tac-toe-game-pattern.jpg"); 
   background-size: 300px 300px;
-  font-family: 'Brush Script MT', cursive;
+  font-family: 'Otomanopee One', sans-serif;
   margin: 0px;
 }
+
+button {font-family: 'Otomanopee One', sans-serif;}
 
 .main-background {
   background-color: #ffffff;
@@ -16,7 +18,8 @@ body {
 }
 
 .nav {
-  margin-right: 80%;
+  margin-right: 40%;
+  width: 50%;
 }
 
 .flex-container {
@@ -50,11 +53,11 @@ body {
 }
 
 .flex-item {
-  border: 2px solid rgba(100, 100, 100, 0.5);
+  /*border: 2px solid rgba(100, 100, 100, 0.5);*/
   margin: 10px;
   font-size: 30px;
   height: 60px;
-  width: 350px;
+  width: 100%;
 }
 
 .flex-item-2 {
@@ -63,11 +66,12 @@ body {
   padding: 20px;
   font-size: 25px;
   height: 75%;
-  width: 100%;
+  width: 85%;
 }
 
 .user-message--error {
   color: rgb(180, 0, 0);
+  text-align:center;
 }
 
 .error_page {
@@ -90,15 +94,7 @@ body {
 .black-bg {
   background-color:black;
 }
-.sbs {
-  display: inline-flex;
-  margin:1rem;
-  justify-content: space-evenly;
-  flex-flow: wrap;
-  text-align: center;
-  
-  
-}
+
 .white-bg {
   background-color: white;
 }
@@ -121,4 +117,26 @@ body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+@media (max-width: 768px) {
+  .first-half, .second-half {
+    flex-direction: column;
+  }
+
+  .flex-item-2 {
+    width: 90%;
+  }
+
+  .nav {
+    margin-right: 0%;
+    width: 100%;
+  }
+  
+}
+
+@media (max-width: 450px) {
+  .flex-item-2 {
+    width: 85%;
+  }
 }

@@ -1,6 +1,5 @@
 let player1Turn = true; 
 let play = true;
-let clickCount = 0;
 let gameWinner;
 let game = {
         "1": document.getElementById("1").innerHTML,
@@ -16,18 +15,12 @@ let game = {
 
 
 if (document.getElementById("game")) {
-    //window.setTimeout(function(){ document.location.reload(true); }, 15000); // this is to refresh the page every 15 seconds
+    // window.setTimeout(function(){ document.location.reload(true); }, 15000); // this is to refresh the page every 15 seconds
     checkwin();
     player1Turn = document.getElementById("player1Turn").value;
     const user = document.getElementById("user").innerText;
     const player1 = document.getElementById("player1").value;
     const player2 = document.getElementById("player2").value;
-    clickCount = parseInt(document.getElementById("clickCount").value);
-    if(!clickCount) {
-        clickCount = 0;
-    }
-    console.log(typeof clickcount);
-    console.log('hello');
     if (user == player1){
         document.getElementById("playerNumber").innerHTML = "You are Player 1.";
         document.getElementById("playerSymbol").innerHTML = "Your symbol is: X";
@@ -48,9 +41,7 @@ if (document.getElementById("game")) {
                     game[this.id] = this.innerHTML;
                     console.log(game);
                     player1Turn = 'false';
-                    clickCount++;
                     checkwin();
-                    clickCount = toString(clickCount)
                     sendJson();
                 } 
                 if (player2 == user && player1Turn == 'false') {
@@ -58,9 +49,7 @@ if (document.getElementById("game")) {
                     game[this.id] = this.innerHTML;
                     console.log(game);
                     player1Turn = 'true';
-                    clickCount++;
                     checkwin();
-                    clickCount = toString(clickCount)
                     sendJson();
                 }
             }
@@ -84,7 +73,6 @@ if (document.getElementById("game")) {
                     player1Turn = true;
                 }
             }
-            clickCount++;
         }
         checkwin();
     }
@@ -92,6 +80,8 @@ if (document.getElementById("game")) {
 
 function checkwin() {
     grid = document.querySelectorAll('#myTable td');
+    console.log(grid);
+
     // check vert
     let i = 0;
     for (i = 0; i < 3; i++) {
@@ -122,14 +112,27 @@ function checkwin() {
         }
     }
     // tie game
-    if (clickCount == 9 && play == true) {
+    // if (clickCount == 9 && play == true) {
+    //     document.getElementById("title").innerText = "Tie Game!";
+    //     document.querySelectorAll('#myTable td').forEach(e => e.classList.add("winner"));
+    //     gameWinner = "tie";
+    //     play = false;
+    // }
+
+    else if (grid[0].innerText != '' && grid[1].innerText != '' && grid[2].innerText != '' && grid[3].innerText != ''
+    && grid[4].innerText != '' && grid[5].innerText != '' && grid[6].innerText != '' && grid[7].innerText != ''
+    && grid[8].innerText != ''){
         document.getElementById("title").innerText = "Tie Game!";
         document.querySelectorAll('#myTable td').forEach(e => e.classList.add("winner"));
-        gameWinner = "tie";
+        gameWinner = 'tie';
         play = false;
     }
+    
+   
     ////////////////////////////////////////////////////
-    // NEED TO BE SAVING THE CLICK COUNT BECAUSE IT IS NOT UPDATING THE DATABASE WHEN THERE IS A TIE GAME
+    // NEED TO RESTRUCTURE AWAY FROM CLICK COUNT AND INSTEAD WORK WITH THE 
+    // OBJECT VALUES TO SEE IF ALL OF THEM ARE FULL AND IF THEY ARE THEN THE
+    // PLAY VARIABLE IS CHANGED TO FALSE
     ////////////////////////////////////////////////////
 }
 
@@ -163,7 +166,6 @@ if (document.getElementById("reset")) {
         document.getElementById("title").innerText = "Tic Tac Toe"
         player1Turn = true;
         play = true;
-        clickCount = 0;
     }
 }
 
@@ -172,7 +174,6 @@ function sendJson() {
     document.getElementById("play").value = play;
     document.getElementById("player1Turn").value = player1Turn;
     document.getElementById("gameWinner").value = gameWinner;
-    document.getElementById("clickCount").value = clickCount;
     document.getElementById("gameGrid").value = gameGrid;
     document.getElementById("game").submit();
 }

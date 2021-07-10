@@ -1,11 +1,12 @@
 .main-form {
     background-color: #f2f2f2;
-    width: 40%;
+    width: 800px;
     padding: 40px;
     border-radius: 25px;
     border: 2px solid black;
 }
 
+/* Container around the rounded form container */
 .form-container {
     height: 800px;  /* Change this for all sizes */
     display: flex;
@@ -13,22 +14,24 @@
     align-items: center;
 }
 
+/* Title at the top of the form */
 .form-title {
     text-align: center;
     font-size: xx-large;
 }
 
-/* Full-width input fields */
-
+/* Inputs */
 input[type="email"], input[type="password"], input[type="password"], input[type=text] {
-    max-width: 400px;
+    width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
     box-sizing: border-box;
     border-radius: 25px;
     border: 2px solid black;
+    font-family: 'Otomanopee One', sans-serif;
 }
 
+/* Contains the input and buttons */
 form {
     display: flex;
     flex-direction: column;
@@ -36,24 +39,31 @@ form {
     align-items: center;
 }
 
+/* ? */
 .form-btn-container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+.form-input-container {
+    width: 60%;
+}
+
+/* All button styles */
 .btn, a:link, a:visited {
     border: none;
     color: white;
-    padding: 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    margin: 4px 20px;
+    margin: 4px 5px;
     cursor: pointer;
     border-radius: 12px;
-    max-width: 150px;
+    width: 150px;
     border: 2px solid black;
-    opacity: 0.75
+    opacity: 0.75;
 }
 
 .btn:hover, a:hover {opacity: 1}
@@ -61,6 +71,8 @@ form {
 .btn-login, .save-btn {
     background-color: #F5DF4E;
     color: black;
+    width: 350px;
+    padding: 10px;
 }
 
 .btn-signup, .cancel-btn, a:link, a:visited {
@@ -68,4 +80,63 @@ form {
     color: black;
     list-style-type: none;
     text-decoration: none;
+    padding: 8px 0px;
+}
+
+.sbs {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+  }
+
+.ttt .no-border {
+    border: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .main-form {
+        background-color: #f2f2f2;
+        width: 100%;
+        padding: 40px;
+        border-radius: 25px;
+        border: 2px solid black;
+    }
+
+    form {
+        align-items: initial;
+    }
+
+    input[type="email"], input[type="password"], input[type="password"], input[type=text] {
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border-radius: 25px;
+        border: 2px solid black;
+        width: 100%;
+    }
+
+    .form-input-container {
+        width: 100%;
+    }
+
+    .form-btn-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn, a:link, a:visited {
+        width: 100%;
+    }
+
+    .btn-login, .save-btn {
+        width: 100%;
+    }
+
+    .sbs {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+
 }

@@ -1,11 +1,5 @@
 <%- include('includes/head.ejs') %>
     </head>
-
-    <body>
-        <header>
-            <!--<a href="/">Enter User</a> | <a href="/users">Users</a><-->
-        </header>
-
         <body>
             <div class="form-container">
                 <div class="main-form">
@@ -19,40 +13,33 @@
                             <% } %>
                     </div>
 
-                    <form class="" action="/login" method="POST"><!--novalidate method="POST"-->
-                        <div class="">
-                            <div class="">
+                    <form action="/login" method="POST"><!--novalidate method="POST"-->
+                        <div class="form-input-container">
+                            <div>
                                 <label for="email"></label>
                                 <input class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>"
                                     type="email" name="email" id="email" value="<%= oldInput.email %>"
                                     placeholder="Email">
                             </div>
-                            <div class="">
+                            <div>
                                 <label for="password"></label>
                                 <input
                                     class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>"
                                     type="password" name="password" id="password" placeholder="Password">
                             </div>
                         </div>
-                        
-                            <div class="">
+                        <div class="form-btn-container">
                                 <input type="hidden" id="latitude" name="latitude" value="">
                                 <input type="hidden" id="longitude" name="longitude" value="">
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <button class="btn btn-login" type="submit">Login</button>
-                            </div>
-                        </form>
-                        <div class="sbs">
-                            <div class="">
-                                <a href="/signup">Sign Up</a>
-                            </div>
-                            <div class="">
-                                <a href="/reset">Reset Password</a>
+
+                            <div class="sbs">
+                                    <a href="/signup">Sign Up</a>
+                                    <a href="/reset">Reset Password</a>
                             </div>
                         </div>
-                        
-                    
-
+                    </form>
                 </div>
                 </div>
                 <script src="/js/geolocation.js"></script>

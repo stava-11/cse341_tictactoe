@@ -44,14 +44,11 @@ exports.getLogin = (req, res, next) => {
             password: ''
         },
         validationErrors: []
-        //isAuthenticated: false//isLoggedIn//req.isLoggedIn//false
     });
 };
 
 
 exports.getSignup = (req, res, next) => {
-    //console.log(req.flash('error'));
-    //console.log(req.session.isLoggedIn);
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -64,13 +61,12 @@ exports.getSignup = (req, res, next) => {
         errorMessage: message,
         oldInput: {
             name: '',
-            // country: '',
             email: '',
             password: '',
             confirmPassword: ''
         },
         validationErrors: []
-        //isAuthenticated: false
+
     });
 };
 
@@ -102,8 +98,7 @@ exports.postLogin = (req, res, next) => {
     User.findOne({ email: email })
         .then(currentUser => {
             if (!currentUser) {
-                //req.flash('error', 'Invalid email or password')
-                //return res.redirect('/login');
+
                 return res.status(422).render('login', {//auth/
                     path: '/login',
                     pageTitle: 'Login',
@@ -113,7 +108,7 @@ exports.postLogin = (req, res, next) => {
                         password: password
 
                     },
-                    validationErrors: []//[{param: 'email', param: 'password'}]
+                    validationErrors: []
                 });
             };
             return bcrypt
@@ -122,8 +117,13 @@ exports.postLogin = (req, res, next) => {
                     if (doMatch) {
                         req.session.isLoggedIn = true;
                         req.session.user = currentUser;
-                        req.session.latitude = req.body.latitude;
-                        req.session.longitude = req.body.longitude;
+                        if (req.body.longitude && req.body.latitude){
+                            req.session.latitude = req.body.latitude;
+                            req.session.longitude = req.body.longitude;
+                        } else {
+                            req.session.latitude = null;
+                            req.session.longitude = null;
+                        }
                         req.session.save();
                         return currentUser;
                     } else {
@@ -148,14 +148,21 @@ exports.postLogin = (req, res, next) => {
         .then(currentUser => {
             console.log('latitude');
             console.log(req.session.latitude);
-            const apiURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${req.session.latitude}&lon=${req.session.longitude}&units=imperial&appid=${WEATHER_API_KEY}`;
-            return fetch(apiURL)
-            .then(response => response.json())
-            .then(jsObject => {
-                req.session.weather = jsObject;
+            if (req.session.latitude != null && req.session.longitude != null) {
+                const apiURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${req.session.latitude}&lon=${req.session.longitude}&units=imperial&appid=${WEATHER_API_KEY}`;
+                return fetch(apiURL)
+                .then(response => response.json())
+                .then(jsObject => {
+                    req.session.weather = jsObject;
+                    req.session.save();
+                    return jsObject
+                });
+            } else {
+                req.session.weather = null;
                 req.session.save();
+                jsObject = null;
                 return jsObject
-            });
+            }
         })
         .then(jsObject  => {
             const players = User.find();
@@ -191,84 +198,7 @@ exports.postLogin = (req, res, next) => {
             return next(error);
         });
 
-        //////////////////////////////////////////////
-        // Need to add in the weather information here
-        // 1) Comment Out all this codeChange all country info to long/lat
-        //    A) Database
-        //    B) EJS Pages
-        //    C) Controller
-        // 2) Get long/lat from:
-        //    https://developer.mozilla.org/en-US/docs/Web/API/GeolocationCoordinates/longitude
-        //    This can be done anytime the user is logged into the dashboard and does not need
-        //    to be saved in the database, that way it changes as they travel.
-        // 4) show weather for current user in the dashboard
-        //////////////////////////////////////////////
-
 };
-
-
-
-
-//     User.findOne({ email: email })
-//         .then(user => {
-//             if (!user) {
-//                 //req.flash('error', 'Invalid email or password')
-//                 //return res.redirect('/login');
-//                 return res.status(422).render('login', {//auth/
-//                     path: '/login',
-//                     pageTitle: 'Login',
-//                     errorMessage: 'Invalid email or password.',
-//                     oldInput: {
-//                         email: email,
-//                         password: password
-
-//                     },
-//                     validationErrors: []//[{param: 'email', param: 'password'}]
-//                 });
-//             }
-//             bcrypt
-//                 .compare(password, user.password)
-//                 .then(doMatch => {
-//                     if (doMatch) {
-//                         req.session.isLoggedIn = true;
-//                         req.session.user = user;
-//                         console.log(req.session);
-//                         return req.session.save(err => {
-//                             console.log(err);
-//                             res.render('dashboard', {
-//                                 path: '/dashboard',
-//                                 pageTitle: 'Dashboard',
-//                             });
-//                             //res.redirect('/');//where to go?
-//                         });
-//                     }
-//                     //req.flash('error', 'Invalid email or password')
-//                     //res.redirect('/login');
-//                     return res.status(422).render('login', {//auth/
-//                         path: '/login',
-//                         pageTitle: 'Login',
-//                         errorMessage: 'Invalid email or password.',
-//                         oldInput: {
-//                             email: email,
-//                             password: password
-
-//                         },
-//                         validationErrors: []//[{param: 'email', param: 'password'}]
-//                     });
-//                 })
-//                 .catch(err => {
-//                     console.log(err);
-//                     res.redirect('login');// /
-//                 });
-//         })
-//         //next();
-//         .catch(err => //console.log(err)
-//         {
-//             const error = new Error(err);
-//             error.httpStatusCode = 500;
-//             return next(error);
-//         });
-// };
 
 exports.postLogout = (req, res, next) => {
     req.session.destroy(err => {
@@ -281,6 +211,9 @@ exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const name = req.body.name;
+    if (req.session.weather) {
+        req.session.weather = null;
+    }
     // const country = req.body.country;
     //const confirmPassword = req.body.confirmPassword;
     const errors = validationResult(req);
@@ -292,7 +225,6 @@ exports.postSignup = (req, res, next) => {
             errorMessage: errors.array()[0].msg,
             oldInput: {
                 name: name,
-                // country: country,
                 email: email,
                 password: password,
                 confirmPassword: req.body.confirmPassword
@@ -300,22 +232,14 @@ exports.postSignup = (req, res, next) => {
             validationErrors: errors.array()
         });
     }
-    // User.findOne({ name: name })
-    //     .then(nameTaken => {
-    //         if (nameTaken) {
-    //             req.flash('error', 'Name already exists. Pick a different one.')
-    //             return res.redirect('/registration');
-    //         }
-    //     })
+    
     bcrypt
         .hash(password, 12)
         .then(hashedPassword => {
             const user = new User({
                 name: name,
-                // country: country,
                 email: email,
-                password: hashedPassword,
-
+                password: hashedPassword
             });
             return user.save();
         })
@@ -323,12 +247,12 @@ exports.postSignup = (req, res, next) => {
             res.redirect('login');// /
             //re-enable before submitting
             //working but don't send lots right now
-            // return transporter.sendMail({
-            //     to: email,
-            //     from: 'str19023@byui.edu',
-            //     subject: 'Signup succeeded',
-            //     html: '<h1>You successfully signed up!</h1>'
-            // });
+            return transporter.sendMail({
+                to: email,
+                from: 'str19023@byui.edu',
+                subject: 'Signup succeeded',
+                html: '<h1>You successfully signed up!</h1>'
+            });
         })
         .catch(err => {
             //console.log(err);
@@ -384,7 +308,7 @@ exports.postReset = (req, res, next) => {
             "http://localhost:5000/reset/${token}">link</a> to set a new password.</p>
             `
                 });//*****!!!change address before heroku push */
-
+                //"https://tictactoe-cse341.herokuapp.com/reset/${token}"//"http://localhost:5000/reset/${token}"
             })
             .catch(err => { //console.log(err); 
                 const error = new Error(err);
@@ -393,6 +317,7 @@ exports.postReset = (req, res, next) => {
             });
     });
 }
+
 exports.getNewPassword = (req, res, next) => {
     const token = req.params.token;
     User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
@@ -422,6 +347,7 @@ exports.getNewPassword = (req, res, next) => {
 
 
 }
+
 exports.postNewPassword = (req, res, next) => {
     const newPassword = req.body.password;
     const userId = req.body.userId;

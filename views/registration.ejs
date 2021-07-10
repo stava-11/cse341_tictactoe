@@ -1,10 +1,5 @@
 <%- include('includes/head.ejs') %>
 <body>
-    <header>
-        <!--<a href="/">Enter User</a> | <a href="/users">Users</a><-->
-    </header>
-    <body>
-
         <div class="form-container">
             <div class="main-form">
                 <div class="form-header">
@@ -16,32 +11,34 @@
                     <% } %>
                 </div>
 
-                <form class="" action="/signup" method="POST">
-                    <div class="">
-                        <div class="">
+                <form action="/signup" method="POST">
+                    <div class="form-input-container">
+                        <div>
                             <label for="name"></label>
-                            <input class="<%= validationErrors.find(e => e.param === 'name') ? 'invalid' : '' %>" type="text" name="name" id="name" value="<%= oldInput.name %>", placeholder="Name">
+                            <input class="<%= validationErrors.find(e => e.param === 'name') ? 'invalid' : '' %>" type="text" name="name" id="name" value="<%= oldInput.name %>" placeholder="Username">
                         </div>
-                        <div class="">
+                        <div>
                             <label for="email"></label>
-                            <input class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" id="email" value="<%= oldInput.email %>", placeholder="Email">
+                            <input class="<%= validationErrors.find(e => e.param === 'email') ? 'invalid' : '' %>" type="email" name="email" id="email" value="<%= oldInput.email %>" placeholder="Email">
                         </div>
-                        <div class="">
+                        <div>
                             <label for="country"></label>
-                            <input class="<%= validationErrors.find(e => e.param === 'country') ? 'invalid' : '' %>" type="text" name="country" id="country" value="<%= oldInput.country %>", placeholder="Zip">
+                            <input class="<%= validationErrors.find(e => e.param === 'country') ? 'invalid' : '' %>" type="text" name="country" id="country" value="<%= oldInput.country %>" placeholder="Zip">
                         </div>
                     
-                        <div class="">
+                        <div>
                             <label for="password"></label>
                             <input class="<%= validationErrors.find(e => e.param === 'password') ? 'invalid' : '' %>" type="password" name="password" id="password" value="<%= oldInput.password %>" placeholder="Password">
                         </div>
-                        <div class="">
+                        <div>
                             <label for="confirmPassword"></label>
                             <input class="<%= validationErrors.find(e => e.param === 'confirmPassword') ? 'invalid' : '' %>" type="password" name="confirmPassword" id="confirmPassword" value="<%= oldInput.confirmPassword %>" placeholder="Confirm Password">
                         </div>
                     </div>
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <button class="btn btn-signup" type="submit">Sign Up</button>
+                    <div class="form-btn-container">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button class="btn btn-signup" type="submit">Sign Up</button>
+                    </div>
                 </form>
             </div>
         </div>

@@ -2,11 +2,6 @@
 <link rel="stylesheet" type="text/css" href="/css/home.css">
 
 </head>
-<body>
-    <header>
-        <!--<a href="/">Enter User</a> | <a href="/users">Users</a><-->
-        
-    </header>
     <body> 
         <main class="ttt">
         <h1 class="gameTitle" id="title">Tic Tac Toe</h1>
@@ -32,8 +27,8 @@
                 <p id="playerNumber"></p>
                 <p id="playerSymbol"></p>
                 <p id="user" hidden><%= user._id %></p>
-                <a class="active" href="/dashboard">Back To Games</a>
-                <form hidden id="game" action="/postPlayerMove" method="POST">
+                <a class="active" href="/dashboard">Dashboard</a>
+                <form class ="no-border" hidden id="game" action="/postPlayerMove" method="POST">
                     <input type ="hidden" id="_id" name="_id" value="<%= gameDetails._id %>">
                     <input type ="hidden" id="play" name="play" value="<%= gameDetails.play %>">
                     <input type ="hidden" id="player1Turn" name="player1Turn" value="<%= gameDetails.player1Turn %>">
@@ -45,9 +40,8 @@
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 </form>
             </article>
-                
         </section>
     </main>
-
+    <!-- <script src="/js/gameRefresh.js"></script> -->
 <script src="/js/ticTacToe.js"></script>
 <%- include('includes/end.ejs') %>
